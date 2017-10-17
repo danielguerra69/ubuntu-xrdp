@@ -1,5 +1,6 @@
 #!/bin/bash
 
+xrdp-keygen xrdp auto
 
 # generate machine-id
 uuidgen > /etc/machine-id

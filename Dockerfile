@@ -63,8 +63,6 @@ RUN rm -rf /tmp/*
 ADD bin /usr/bin
 ADD etc /etc
 #ADD pulse /usr/lib/pulse-10.0/modules/
-#ADD at-spi2 /usr/share/defaults/at-spi2/
-#RUN sh /usr/share/xrdp/socksetup
 RUN mkdir /var/run/dbus
 RUN cp /etc/X11/xrdp/xorg.conf /etc/X11
 #RUN sed -i "s/console/anybody/g" /etc/X11/Xwrapper.config
@@ -84,4 +82,4 @@ RUN echo "ubuntu    ALL=(ALL) ALL" >> /etc/sudoers
 
 EXPOSE 3389
 ENTRYPOINT ["/usr/bin/docker-entrypoint.sh"]
-CMD ["/usr/bin/supervisord","-c","/etc/supervisord.conf"]
+CMD ["supervisord"]

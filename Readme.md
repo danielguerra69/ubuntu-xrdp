@@ -1,4 +1,4 @@
-## Ubuntu 16.04 Multi User Remote Desktop Server
+## Ubuntu 16.04 Xenial Multi User Remote Desktop Server
 
 Fully implemented Multi User xrdp with xorgxrdp and pulseaudio on Ubuntu 16.04.
 Copy/Paste and sound is working. Users can re-login in the same session.
@@ -31,5 +31,26 @@ passwd
 
 ## Add new users
 
-docker exec -ti uxrdp adduser mynewuser
+No configuration is needed for new users just do
 
+```bash
+docker exec -ti uxrdp adduser mynewuser
+```
+
+After this the new user can login
+
+## Add new services
+
+To make sure all processes are working supervisor is installed.
+The location for services to start is /etc/supervisor/conf.d
+
+Example: Add mysql as a service
+
+```bash
+apt-get -yy install mysql-server
+echo "[program:mysqld] \
+command= /usr/sbin/mysqld \
+user=mysql \
+autorestart=true \
+priority=100" > /etc/supervisor/conf.d/mysql.conf
+```
