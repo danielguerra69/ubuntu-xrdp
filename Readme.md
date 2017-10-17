@@ -1,4 +1,4 @@
-## Ububtu 16.04 Multi User Remote Desktop Server
+## Ubuntu 16.04 Multi User Remote Desktop Server
 
 Fully implemented Multi User xrdp with xorgxrdp and pulseaudio on Ubuntu 16.04.
 Copy/Paste and sound is working. Users can re-login in the same session.
