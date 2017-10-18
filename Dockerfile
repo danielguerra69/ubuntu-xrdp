@@ -71,6 +71,7 @@ RUN locale-gen en_US.UTF-8
 RUN echo "xfce4-session" > /etc/skel/.Xclients
 RUN cp -r /etc/ssh /ssh_orig
 RUN rm -rf /etc/ssh/*
+RUN rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem 
 
 # Add sample user
 
