@@ -15,7 +15,7 @@ RUN apt-get -yy install \
     xfce4 xfce4-terminal xfce4-screenshooter xfce4-taskmanager \
     xfce4-clipman-plugin xfce4-cpugraph-plugin xfce4-netload-plugin \
     xfce4-xkb-plugin xauth supervisor uuid-runtime pulseaudio locales \
-    firefox pepperflashplugin-nonfree \
+    firefox pepperflashplugin-nonfree openssh-server \
     $BUILD_DEPS
 
 
@@ -69,7 +69,8 @@ RUN cp /etc/X11/xrdp/xorg.conf /etc/X11
 RUN sed -i "s/xrdp\/xorg/xorg/g" /etc/xrdp/sesman.ini
 RUN locale-gen en_US.UTF-8
 RUN echo "xfce4-session" > /etc/skel/.Xclients
-
+RUN cp -r /etc/ssh /ssh_orig
+RUN rm -rf /etc/ssh/*
 
 # Add sample user
 
@@ -80,6 +81,7 @@ RUN echo "ubuntu    ALL=(ALL) ALL" >> /etc/sudoers
 
 # Docker config
 
-EXPOSE 3389
+VOLUME ["/etc/ssh","/home"]
+EXPOSE 3389 22 9001
 ENTRYPOINT ["/usr/bin/docker-entrypoint.sh"]
 CMD ["supervisord"]

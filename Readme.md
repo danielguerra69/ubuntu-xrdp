@@ -9,9 +9,10 @@ Xfce4, Firefox are pre installed.
 Start the rdp server
 
 ```bash
-docker run -d --name uxrdp --hostname terminalserver --shm-size 1g -p 3389:3389 danielguerra/ubuntu-xrdp
+docker run -d --name uxrdp --hostname terminalserver --shm-size 1g -p 3389:3389 -p 2222:22 danielguerra/ubuntu-xrdp
 ```
 *note if you allready use a rdp server on 3389 change -p <my-port>:3389
+	  -p 2222:22 is for ssh access ( ssh -p 2222 ubuntu@<docker-ip> )
 
 Connect with your remote desktop client to the docker server.
 Use the Xorg session (leave as it is), user and pass.
@@ -53,4 +54,5 @@ command= /usr/sbin/mysqld \
 user=mysql \
 autorestart=true \
 priority=100" > /etc/supervisor/conf.d/mysql.conf
+supervisorctl update
 ```
