@@ -53,10 +53,8 @@ RUN make install
 
 WORKDIR /
 RUN apt-get -yy remove xscreensaver
-RUN apt-get -yy remove $BULD_DEPS
-RUN apt-get -yy autoremove
 RUN apt-get -yy clean
-RUN rm -rf /tmp/*
+
 
 # Configure
 
