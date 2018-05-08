@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 as builder
 MAINTAINER Daniel Guerra
 
 # Install packages
@@ -10,13 +10,7 @@ RUN apt-get -yy upgrade
 ENV BUILD_DEPS="git autoconf pkg-config libssl-dev libpam0g-dev \
     libx11-dev libxfixes-dev libxrandr-dev nasm xsltproc flex \
     bison libxml2-dev dpkg-dev libcap-dev"
-RUN apt-get -yy install \
-	sudo apt-utils software-properties-common vim wget ca-certificates \
-    xfce4 xfce4-terminal xfce4-screenshooter xfce4-taskmanager \
-    xfce4-clipman-plugin xfce4-cpugraph-plugin xfce4-netload-plugin \
-    xfce4-xkb-plugin xauth supervisor uuid-runtime pulseaudio locales \
-    firefox pepperflashplugin-nonfree openssh-server \
-    $BUILD_DEPS
+RUN apt-get -yy install  sudo apt-utils software-properties-common $BUILD_DEPS
 
 
 # Build xrdp
@@ -36,31 +30,25 @@ RUN make install
 WORKDIR /tmp/xrdp/sesman/chansrv/pulse
 RUN sed -i "s/\/tmp\/pulseaudio\-10\.0/\/tmp\/pulseaudio\-11\.1/g" Makefile
 RUN make
-RUN cp *.so /usr/lib/pulse-11.1/modules/
+RUN mkdir -p /tmp/so
+RUN cp *.so /tmp/so
 
-# Build xorgxrdp
-
-WORKDIR /tmp
-RUN git clone --branch v0.2.4 --recursive https://github.com/neutrinolabs/xorgxrdp.git
-RUN apt-get -yy install xserver-xorg-dev
-WORKDIR /tmp/xorgxrdp
-RUN ./bootstrap
-RUN ./configure
-RUN make
-RUN make install
-
-# Clean
-
-WORKDIR /
-RUN apt-get -yy remove xscreensaver
-RUN apt-get -yy clean
-
-
-# Configure
-
+FROM ubuntu:18.04
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get -y update
+RUN apt install -yy vim wget ca-certificates xorgxrdp pulseaudio xrdp\
+  xfce4 xfce4-terminal xfce4-screenshooter xfce4-taskmanager \
+  xfce4-clipman-plugin xfce4-cpugraph-plugin xfce4-netload-plugin \
+  xfce4-xkb-plugin xauth supervisor uuid-runtime locales \
+  firefox pepperflashplugin-nonfree openssh-server
+RUN mkdir -p /var/lib/xrdp-pulseaudio-installer
+COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
+COPY --from=builder /tmp/so/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
 ADD bin /usr/bin
 ADD etc /etc
 #ADD pulse /usr/lib/pulse-10.0/modules/
+
+# Configure
 RUN mkdir /var/run/dbus
 RUN cp /etc/X11/xrdp/xorg.conf /etc/X11
 RUN sed -i "s/console/anybody/g" /etc/X11/Xwrapper.config
