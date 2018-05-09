@@ -13,20 +13,22 @@ ENV BUILD_DEPS="git autoconf pkg-config libssl-dev libpam0g-dev \
 RUN apt-get -yy install  sudo apt-utils software-properties-common $BUILD_DEPS
 
 
-# Build xrdp
-
+# Build pulseaudio
 WORKDIR /tmp
 RUN apt-get source pulseaudio
 RUN apt-get build-dep -yy pulseaudio
 WORKDIR /tmp/pulseaudio-11.1
 RUN dpkg-buildpackage -rfakeroot -uc -b
+
+# Build xrdp
 WORKDIR /tmp
 RUN git clone --branch v0.9.4 --recursive https://github.com/neutrinolabs/xrdp.git
 WORKDIR /tmp/xrdp
 RUN ./bootstrap
 RUN ./configure
 RUN make
-RUN make install
+
+# Finaly build the drivers
 WORKDIR /tmp/xrdp/sesman/chansrv/pulse
 RUN sed -i "s/\/tmp\/pulseaudio\-10\.0/\/tmp\/pulseaudio\-11\.1/g" Makefile
 RUN make
@@ -36,11 +38,7 @@ RUN cp *.so /tmp/so
 FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -y update
-RUN apt install -yy vim wget ca-certificates xorgxrdp pulseaudio xrdp\
-  xfce4 xfce4-terminal xfce4-screenshooter xfce4-taskmanager \
-  xfce4-clipman-plugin xfce4-cpugraph-plugin xfce4-netload-plugin \
-  xfce4-xkb-plugin xauth supervisor uuid-runtime locales \
-  firefox pepperflashplugin-nonfree openssh-server
+RUN apt install -y  sudo xorgxrdp pulseaudio xrdp xauth supervisor locales && apt clean
 RUN mkdir -p /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
@@ -55,8 +53,6 @@ RUN sed -i "s/console/anybody/g" /etc/X11/Xwrapper.config
 RUN sed -i "s/xrdp\/xorg/xorg/g" /etc/xrdp/sesman.ini
 RUN locale-gen en_US.UTF-8
 RUN echo "xfce4-session" > /etc/skel/.Xclients
-RUN cp -r /etc/ssh /ssh_orig
-RUN rm -rf /etc/ssh/*
 RUN rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem
 
 # Add sample user
