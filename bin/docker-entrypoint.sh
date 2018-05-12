@@ -19,13 +19,13 @@ fi
 
 # generate fresh rsa key if needed
 if [ ! -f "/etc/ssh/ssh_host_rsa_key" ];
-	then 
+	then
 		ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa
 fi
 
 # generate fresh dsa key if needed
 if [ ! -f "/etc/ssh/ssh_host_dsa_key" ];
-	then 
+	then
 		ssh-keygen -f /etc/ssh/ssh_host_dsa_key -N '' -t dsa
 fi
 
@@ -43,6 +43,5 @@ uuidgen > /etc/machine-id
 
 # set keyboard for all sh users
 echo "export QT_XKB_CONFIG_ROOT=/usr/share/X11/locale" >> /etc/profile
-
 
 exec "$@"
