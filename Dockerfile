@@ -40,7 +40,7 @@ RUN apt install -yy vim wget ca-certificates xorgxrdp pulseaudio xrdp\
   xfce4 xfce4-terminal xfce4-screenshooter xfce4-taskmanager \
   xfce4-clipman-plugin xfce4-cpugraph-plugin xfce4-netload-plugin \
   xfce4-xkb-plugin xauth supervisor uuid-runtime locales \
-  firefox pepperflashplugin-nonfree openssh-server
+  firefox pepperflashplugin-nonfree openssh-server sudo
 RUN mkdir -p /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
