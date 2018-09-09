@@ -1,0 +1,9 @@
+version: '2'
+services:
+  terminalserver:
+    image: danielguerra/ubuntu-xrdp
+    container_name: terminalserver
+    hostname: terminalserver
+    ports:
+      - "3389:3389"
+      - "2222:22"
