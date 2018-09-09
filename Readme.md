@@ -64,3 +64,9 @@ autorestart=true \
 priority=100" > /etc/supervisor/conf.d/mysql.conf
 supervisorctl update
 ```
+## To run with docker-compose
+```bash
+git clone https://github.com/danielguerra69/ubuntu-xrdp.git
+cd ubuntu-xrdp/
+docker-compose up -d
+```
