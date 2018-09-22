@@ -21,7 +21,7 @@ RUN apt-get build-dep -yy pulseaudio
 WORKDIR /tmp/pulseaudio-11.1
 RUN dpkg-buildpackage -rfakeroot -uc -b
 WORKDIR /tmp
-RUN git clone --recursive --branch devel https://github.com/neutrinolabs/xrdp.git
+RUN git clone --recursive --branch v0.9.4 https://github.com/neutrinolabs/xrdp.git
 #ADD clipboard_file.c /sesman/chansrv/clipboard_file.c
 WORKDIR /tmp/xrdp
 RUN ./bootstrap
