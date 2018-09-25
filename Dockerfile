@@ -22,7 +22,7 @@ RUN dpkg-buildpackage -rfakeroot -uc -b
 
 # Build xrdp
 WORKDIR /tmp
-RUN git clone --branch v0.9.4 --recursive https://github.com/neutrinolabs/xrdp.git
+RUN git clone --branch v0.9.7 --recursive https://github.com/neutrinolabs/xrdp.git
 WORKDIR /tmp/xrdp
 RUN ./bootstrap
 RUN ./configure
