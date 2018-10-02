@@ -4,6 +4,7 @@ services:
     image: danielguerra/ubuntu-xrdp
     container_name: terminalserver
     hostname: terminalserver
+    shm_size: 1g
     ports:
       - "3389:3389"
       - "2222:22"
