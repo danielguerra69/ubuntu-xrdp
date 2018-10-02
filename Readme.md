@@ -64,3 +64,21 @@ autorestart=true \
 priority=100" > /etc/supervisor/conf.d/mysql.conf
 supervisorctl update
 ```
+
+## Volumes
+This image uses two volumes:
+1. `/etc/ssh/` holds the sshd host keys and config
+2. `/home/` holds the `ubuntu/` default user home directory
+
+When bind-mounting `/home/`, make sure it contains a folder `ubuntu/` with proper permission, otherwise no login will be possible.
+```
+mkdir -p ubuntu
+chown 1000:1000 ubuntu
+```
+
+## To run with docker-compose
+```bash
+git clone https://github.com/danielguerra69/ubuntu-xrdp.git
+cd ubuntu-xrdp/
+docker-compose up -d
+```
