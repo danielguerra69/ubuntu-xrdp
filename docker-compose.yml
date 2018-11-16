@@ -4,7 +4,7 @@ services:
     build:
       context: .
     image: danielguerra/ubuntu-xrdp
-    container_name: terminalserver
+    container_name: uxrdp
     hostname: terminalserver
     restart: always
     shm_size: 1g
