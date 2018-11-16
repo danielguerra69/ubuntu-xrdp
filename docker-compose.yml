@@ -1,6 +1,8 @@
-version: '2'
+version: '2.1'
 services:
   terminalserver:
+    build:
+      context: .
     image: danielguerra/ubuntu-xrdp
     container_name: terminalserver
     hostname: terminalserver
