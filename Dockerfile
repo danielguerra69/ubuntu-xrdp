@@ -60,9 +60,10 @@ RUN rm -rf /etc/ssh/*
 RUN rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem
 
 # Add sample user
+# sample user uses uid 999 to reduce conflicts with user ids when mounting an existing home dir
 
 RUN addgroup ubuntu
-RUN useradd -m -s /bin/bash -g ubuntu ubuntu
+RUN useradd -m -u 999 -s /bin/bash -g ubuntu ubuntu
 RUN echo "ubuntu:ubuntu" | /usr/sbin/chpasswd
 RUN echo "ubuntu    ALL=(ALL) ALL" >> /etc/sudoers
 
