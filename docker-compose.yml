@@ -1,10 +1,16 @@
-version: '2'
+version: '2.1'
 services:
   terminalserver:
+    build:
+      context: .
     image: danielguerra/ubuntu-xrdp
-    container_name: terminalserver
+    container_name: uxrdp
     hostname: terminalserver
+    restart: always
     shm_size: 1g
     ports:
       - "3389:3389"
       - "2222:22"
+    volumes:
+      - ./data/ssh/:/etc/ssh/
+      - /home/:/home/

@@ -19,7 +19,7 @@ Start the rdp server
 ```bash
 docker run -d --name uxrdp --hostname terminalserver --shm-size 1g -p 3389:3389 -p 2222:22 danielguerra/ubuntu-xrdp
 ```
-*note if you allready use a rdp server on 3389 change -p <my-port>:3389
+*note if you already use a rdp server on 3389 change -p <my-port>:3389
 	  -p 2222:22 is for ssh access ( ssh -p 2222 ubuntu@<docker-ip> )
 
 Connect with your remote desktop client to the docker server.
@@ -29,8 +29,8 @@ Use the Xorg session (leave as it is), user and pass.
 
 There is a sample user with sudo rights
 
-Username : ubuntu
-Password : ubuntu
+Username: ubuntu
+Password: ubuntu
 
 You can change your password in the rdp session in a terminal
 
@@ -73,7 +73,7 @@ This image uses two volumes:
 When bind-mounting `/home/`, make sure it contains a folder `ubuntu/` with proper permission, otherwise no login will be possible.
 ```
 mkdir -p ubuntu
-chown 1000:1000 ubuntu
+chown 999:999 ubuntu
 ```
 
 ## To run with docker-compose
