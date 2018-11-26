@@ -35,40 +35,60 @@ RUN cp *.so /tmp/so
 
 FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get -y update
-RUN apt install -yy vim wget ca-certificates xorgxrdp pulseaudio xrdp\
-  xfce4 xfce4-terminal xfce4-screenshooter xfce4-taskmanager \
-  xfce4-clipman-plugin xfce4-cpugraph-plugin xfce4-netload-plugin \
-  xfce4-xkb-plugin xauth supervisor uuid-runtime locales \
-  firefox pepperflashplugin-nonfree openssh-server sudo
-RUN mkdir -p /var/lib/xrdp-pulseaudio-installer
+RUN apt update && apt -y full-upgrade && apt install -y \
+  ca-certificates \
+  firefox \
+  less \
+  locales \
+  openssh-server \
+  pepperflashplugin-nonfree \
+  pulseaudio \
+  sudo \
+  supervisor \
+  uuid-runtime \
+  vim \
+  wget \
+  xauth \
+  xautolock \
+  xfce4 \
+  xfce4-clipman-plugin \
+  xfce4-cpugraph-plugin \
+  xfce4-netload-plugin \
+  xfce4-screenshooter \
+  xfce4-taskmanager \
+  xfce4-terminal \
+  xfce4-xkb-plugin \
+  xorgxrdp \
+  xrdp \
+  && \
+  rm -rf /var/cache/apt /var/lib/apt/lists && \
+  mkdir -p /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
 ADD bin /usr/bin
 ADD etc /etc
+ADD autostart /etc/xdg/autostart
 #ADD pulse /usr/lib/pulse-10.0/modules/
 
 # Configure
-RUN mkdir /var/run/dbus
-RUN cp /etc/X11/xrdp/xorg.conf /etc/X11
-RUN sed -i "s/console/anybody/g" /etc/X11/Xwrapper.config
-RUN sed -i "s/xrdp\/xorg/xorg/g" /etc/xrdp/sesman.ini
-RUN locale-gen en_US.UTF-8
-RUN echo "xfce4-session" > /etc/skel/.Xclients
-RUN cp -r /etc/ssh /ssh_orig
-RUN rm -rf /etc/ssh/*
-RUN rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem
+RUN mkdir /var/run/dbus && \
+  cp /etc/X11/xrdp/xorg.conf /etc/X11 && \
+  sed -i "s/console/anybody/g" /etc/X11/Xwrapper.config && \
+  sed -i "s/xrdp\/xorg/xorg/g" /etc/xrdp/sesman.ini && \
+  locale-gen en_US.UTF-8 && \
+  echo "xfce4-session" > /etc/skel/.Xclients && \
+  cp -r /etc/ssh /ssh_orig && \
+  rm -rf /etc/ssh/* && \
+  rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem
 
 # Add sample user
 # sample user uses uid 999 to reduce conflicts with user ids when mounting an existing home dir
-
-RUN addgroup --gid 999 ubuntu
-RUN useradd -m -u 999 -s /bin/bash -g ubuntu ubuntu
-RUN echo "ubuntu:ubuntu" | /usr/sbin/chpasswd
-RUN echo "ubuntu    ALL=(ALL) ALL" >> /etc/sudoers
+RUN addgroup --gid 999 ubuntu && \
+  useradd -m -u 999 -s /bin/bash -g ubuntu ubuntu && \
+  echo "ubuntu:ubuntu" | /usr/sbin/chpasswd && \
+  echo "ubuntu    ALL=(ALL) ALL" >> /etc/sudoers
 
 # Docker config
-
 VOLUME ["/etc/ssh","/home"]
 EXPOSE 3389 22 9001
 ENTRYPOINT ["/usr/bin/docker-entrypoint.sh"]
