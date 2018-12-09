@@ -1,0 +1,2 @@
+#!/bin/sh
+xautolock -time 11 -locker /usr/bin/xfce-logout
