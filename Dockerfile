@@ -34,6 +34,9 @@ RUN mkdir -p /tmp/so
 RUN cp *.so /tmp/so
 
 FROM ubuntu:18.04
+ARG ADDITIONAL_PACKAGES=""
+ENV ADDITIONAL_PACKAGES=${ADDITIONAL_PACKAGES}
+
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && apt -y full-upgrade && apt install -y \
   ca-certificates \
@@ -60,6 +63,7 @@ RUN apt update && apt -y full-upgrade && apt install -y \
   xfce4-xkb-plugin \
   xorgxrdp \
   xrdp \
+  $ADDITIONAL_PACKAGES \
   && \
   rm -rf /var/cache/apt /var/lib/apt/lists && \
   mkdir -p /var/lib/xrdp-pulseaudio-installer

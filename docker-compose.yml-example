@@ -3,6 +3,8 @@ services:
   terminalserver:
     build:
       context: .
+      #args:
+        #ADDITIONAL_PACKAGES: net-tools
     image: danielguerra/ubuntu-xrdp
     container_name: uxrdp
     hostname: terminalserver
