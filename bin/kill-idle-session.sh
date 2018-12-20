@@ -8,6 +8,7 @@ if [ -z $IDLETIME ]; then
   limit=$IDLETIME
 else
   limit=30
+fi
 
 date
 echo "Checking for inactive sessions!"
