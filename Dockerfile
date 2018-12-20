@@ -83,10 +83,13 @@ RUN mkdir /var/run/dbus && \
 
 # Add sample user
 # sample user uses uid 999 to reduce conflicts with user ids when mounting an existing home dir
+ARG PASSWORD=ubuntu
+ENV PASSWORD=${PASSWORD}
 RUN addgroup --gid 999 ubuntu && \
   useradd -m -u 999 -s /bin/bash -g ubuntu ubuntu && \
-  echo "ubuntu:ubuntu" | /usr/sbin/chpasswd && \
-  echo "ubuntu    ALL=(ALL) ALL" >> /etc/sudoers
+  echo "ubuntu:${PASSWORD}" | /usr/sbin/chpasswd && \
+  echo "ubuntu    ALL=(ALL) ALL" >> /etc/sudoers && \
+  unset $PASSWORD
 
 # Docker config
 VOLUME ["/etc/ssh","/home"]
