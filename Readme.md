@@ -75,10 +75,14 @@ When bind-mounting `/home/`, make sure it contains a folder `ubuntu/` with prope
 mkdir -p ubuntu
 chown 999:999 ubuntu
 ```
+## Installing additional packages during build
+
+The Dockerfile has support for the build argument ADDITIONAL_PACKAGES to install additional packages during build. Either pass it with `--build-arg` during `docker build` or uncomment the `args` and `ADDITIONAL_PACKAGES` lines in the `docker-compose.yml` and run `docker-compose build`.
 
 ## To run with docker-compose
 ```bash
 git clone https://github.com/danielguerra69/ubuntu-xrdp.git
 cd ubuntu-xrdp/
+cp docker-compose.yml-example docker-compose.yml
 docker-compose up -d
 ```
