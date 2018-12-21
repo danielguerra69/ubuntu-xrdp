@@ -59,6 +59,7 @@ RUN apt update && apt -y full-upgrade && apt install -y \
   xfce4-terminal \
   xfce4-xkb-plugin \
   xorgxrdp \
+  xprintidle \
   xrdp \
   && \
   rm -rf /var/cache/apt /var/lib/apt/lists && \
