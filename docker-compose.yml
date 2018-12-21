@@ -5,6 +5,7 @@ services:
       context: .
       args:
         PASSWORDHASH: $$1$$z53Cg/fV$$06o379IvIOxj/ESruVKrG1
+        IDLETIME: 60
     image: danielguerra/ubuntu-xrdp
     container_name: uxrdp
     hostname: terminalserver
