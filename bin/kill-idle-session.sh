@@ -3,7 +3,11 @@
 # https://gist.github.com/mnebuerquo/e825530cf2bfd363b6c3cd82fe697d94
 set -eu
 displays=$(ps aux | grep Xorg | grep -v 'grep\|sed' | sed -r 's|.*(Xorg :[0-9]*).*|\1|' | cut -d' ' -f 2)
-limit=30
+
+if [ -z $IDLETIME ]; then
+  limit=$IDLETIME
+else
+  limit=30
 
 date
 echo "Checking for inactive sessions!"
