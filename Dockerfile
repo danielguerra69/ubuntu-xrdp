@@ -89,9 +89,9 @@ ARG PASSWORDHASH="$1$1osxf5dX$z2IN8cgmQocDYwTCkyh6r/"
 ENV PASSWORDHASH=${PASSWORDHASH}
 RUN addgroup --gid 999 ubuntu && \
   useradd -m -u 999 -s /bin/bash -g ubuntu ubuntu && \
-  echo "ubuntu:${PASSWORD}" | /usr/sbin/chpasswd -e && \
+  echo "ubuntu:${PASSWORDHASH}" | /usr/sbin/chpasswd -e && \
   echo "ubuntu    ALL=(ALL) ALL" >> /etc/sudoers && \
-  unset $PASSWORD
+  unset PASSWORDHASH
 
 # Docker config
 VOLUME ["/etc/ssh","/home"]
