@@ -5,13 +5,14 @@ services:
       context: .
       args:
         PASSWORDHASH: $$1$$z53Cg/fV$$06o379IvIOxj/ESruVKrG1
-        IDLETIME: 60
         ADDITIONAL_PACKAGES: nano
     image: danielguerra/ubuntu-xrdp
     container_name: uxrdp
     hostname: terminalserver
     restart: always
     shm_size: 1g
+    environment:
+      IDLETIME: 60
     ports:
       - "3389:3389"
       - "2222:22"
