@@ -82,18 +82,6 @@ RUN mkdir /var/run/dbus && \
   rm -rf /etc/ssh/* && \
   rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem
 
-# Add sample user
-# sample user uses uid 999 to reduce conflicts with user ids when mounting an existing home dir
-# the below has represents the password 'ubuntu'
-# run `openssl passwd -1 'newpassword'` to create a custom hash
-ARG PASSWORDHASH="$1$1osxf5dX$z2IN8cgmQocDYwTCkyh6r/"
-ENV PASSWORDHASH=${PASSWORDHASH}
-RUN addgroup --gid 999 ubuntu && \
-  useradd -m -u 999 -s /bin/bash -g ubuntu ubuntu && \
-  echo "ubuntu:${PASSWORDHASH}" | /usr/sbin/chpasswd -e && \
-  echo "ubuntu    ALL=(ALL) ALL" >> /etc/sudoers && \
-  unset PASSWORDHASH
-
 # Docker config
 VOLUME ["/etc/ssh","/home"]
 EXPOSE 3389 22 9001
