@@ -59,6 +59,7 @@ RUN apt update && apt -y full-upgrade && apt install -y \
   xfce4-terminal \
   xfce4-xkb-plugin \
   xorgxrdp \
+  xprintidle \
   xrdp \
   && \
   rm -rf /var/cache/apt /var/lib/apt/lists && \
@@ -80,13 +81,6 @@ RUN mkdir /var/run/dbus && \
   cp -r /etc/ssh /ssh_orig && \
   rm -rf /etc/ssh/* && \
   rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem
-
-# Add sample user
-# sample user uses uid 999 to reduce conflicts with user ids when mounting an existing home dir
-RUN addgroup --gid 999 ubuntu && \
-  useradd -m -u 999 -s /bin/bash -g ubuntu ubuntu && \
-  echo "ubuntu:ubuntu" | /usr/sbin/chpasswd && \
-  echo "ubuntu    ALL=(ALL) ALL" >> /etc/sudoers
 
 # Docker config
 VOLUME ["/etc/ssh","/home"]

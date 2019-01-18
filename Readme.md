@@ -15,6 +15,7 @@ danielguerra/ubuntu-xrdp:18.04  or latest
 ## Usage
 
 Start the rdp server
+(WARNING: use the --shm-size 1g or firefox/chrome will crash)
 
 ```bash
 docker run -d --name uxrdp --hostname terminalserver --shm-size 1g -p 3389:3389 -p 2222:22 danielguerra/ubuntu-xrdp
@@ -31,6 +32,21 @@ There is a sample user with sudo rights
 
 Username: ubuntu
 Password: ubuntu
+
+
+You can set a PASSWORDHASH
+
+First create a password hash
+
+```bash
+openssl passwd -1 'newpassword'
+```
+
+Run the xrdp container with your hash
+
+```bash
+docker run -d -e PASSWORDHASH='$1$Cm8EQjXg$7dJeRsw6TLvgxsl3.pBRZ1'
+```
 
 You can change your password in the rdp session in a terminal
 
