@@ -15,6 +15,7 @@ danielguerra/ubuntu-xrdp:18.04  or latest
 ## Usage
 
 Start the rdp server
+(WARNING: use the --shm-size 1g or firefox/chrome will crash)
 
 ```bash
 docker run -d --name uxrdp --hostname terminalserver --shm-size 1g -p 3389:3389 -p 2222:22 danielguerra/ubuntu-xrdp
