@@ -38,7 +38,7 @@ RUN cp *.so /tmp/so
 FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -y update
-RUN apt install -y  sudo xorgxrdp pulseaudio xrdp xauth supervisor locales && apt clean
+RUN apt install -y  sudo xorgxrdp pulseaudio xrdp xauth supervisor locales uuid-runtime && apt clean
 RUN mkdir -p /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
