@@ -1,0 +1,8 @@
+#!/bin/sh
+if [ $IDLETIME ]; then
+    xautolock -time $IDLETIME -locker /usr/bin/xfce-logout
+elif [ $LOCKTIME ]; then
+    xautolock -time $LOCKTIME -locker xflock4
+else
+    xautolock -time 10 -locker xflock4
+fi

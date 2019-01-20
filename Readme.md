@@ -15,11 +15,12 @@ danielguerra/ubuntu-xrdp:18.04  or latest
 ## Usage
 
 Start the rdp server
+(WARNING: use the --shm-size 1g or firefox/chrome will crash)
 
 ```bash
 docker run -d --name uxrdp --hostname terminalserver --shm-size 1g -p 3389:3389 -p 2222:22 danielguerra/ubuntu-xrdp
 ```
-*note if you allready use a rdp server on 3389 change -p <my-port>:3389
+*note if you already use a rdp server on 3389 change -p <my-port>:3389
 	  -p 2222:22 is for ssh access ( ssh -p 2222 ubuntu@<docker-ip> )
 
 Connect with your remote desktop client to the docker server.
@@ -29,8 +30,23 @@ Use the Xorg session (leave as it is), user and pass.
 
 There is a sample user with sudo rights
 
-Username : ubuntu
-Password : ubuntu
+Username: ubuntu
+Password: ubuntu
+
+
+You can set a PASSWORDHASH
+
+First create a password hash
+
+```bash
+openssl passwd -1 'newpassword'
+```
+
+Run the xrdp container with your hash
+
+```bash
+docker run -d -e PASSWORDHASH='$1$Cm8EQjXg$7dJeRsw6TLvgxsl3.pBRZ1'
+```
 
 You can change your password in the rdp session in a terminal
 
@@ -63,4 +79,22 @@ user=mysql \
 autorestart=true \
 priority=100" > /etc/supervisor/conf.d/mysql.conf
 supervisorctl update
+```
+
+## Volumes
+This image uses two volumes:
+1. `/etc/ssh/` holds the sshd host keys and config
+2. `/home/` holds the `ubuntu/` default user home directory
+
+When bind-mounting `/home/`, make sure it contains a folder `ubuntu/` with proper permission, otherwise no login will be possible.
+```
+mkdir -p ubuntu
+chown 999:999 ubuntu
+```
+
+## To run with docker-compose
+```bash
+git clone https://github.com/danielguerra69/ubuntu-xrdp.git
+cd ubuntu-xrdp/
+docker-compose up -d
 ```
