@@ -1,8 +1,5 @@
 #!/bin/bash
 
-<<<<<<< HEAD
-=======
-
 # Add sample user
 # sample user uses uid 999 to reduce conflicts with user ids when mounting an existing home dir
 # the below has represents the password 'ubuntu'
@@ -48,7 +45,7 @@ fi
 
 #prepare run dir
 mkdir -p /var/run/sshd
->>>>>>> master
+
 
 # generate xrdp key
 if [ ! -f "/etc/xrdp/rsakeys.ini" ];
