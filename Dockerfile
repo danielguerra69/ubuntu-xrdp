@@ -65,7 +65,6 @@ ADD autostart /etc/xdg/autostart
 
 # Configure
 
-RUN mkdir /var/run/dbus
 RUN cp /etc/X11/xrdp/xorg.conf /etc/X11
 RUN sed -i "s/console/anybody/g" /etc/X11/Xwrapper.config
 RUN sed -i "s/xrdp\/xorg/xorg/g" /etc/xrdp/sesman.ini
@@ -79,13 +78,7 @@ RUN addgroup ubuntu
 RUN useradd -m -s /bin/bash -g ubuntu ubuntu
 RUN echo "ubuntu:ubuntu" | /usr/sbin/chpasswd
 RUN echo "ubuntu    ALL=(ALL) ALL" >> /etc/sudoers
-RUN mkdir /var/run/dbus && \
-  cp /etc/X11/xrdp/xorg.conf /etc/X11 && \
-  sed -i "s/console/anybody/g" /etc/X11/Xwrapper.config && \
-  sed -i "s/xrdp\/xorg/xorg/g" /etc/xrdp/sesman.ini && \
-  locale-gen en_US.UTF-8 && \
-  echo "xfce4-session" > /etc/skel/.Xclients && \
-  cp -r /etc/ssh /ssh_orig && \
+RUN cp -r /etc/ssh /ssh_orig && \
   rm -rf /etc/ssh/* && \
   rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem
 
