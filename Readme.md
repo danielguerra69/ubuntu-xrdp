@@ -87,14 +87,22 @@ This image uses two volumes:
 2. `/home/` holds the `ubuntu/` default user home directory
 
 When bind-mounting `/home/`, make sure it contains a folder `ubuntu/` with proper permission, otherwise no login will be possible.
+
 ```
 mkdir -p ubuntu
 chown 999:999 ubuntu
 ```
 
+## Installing additional packages during build
+
+The Dockerfile has support for the build argument ADDITIONAL_PACKAGES to install additional packages during build. Either pass it with `--build-arg` during `docker build` or add it 
+as `args` in your `docker-compose.override.yml` and run `docker-compose build`.
+
 ## To run with docker-compose
+
 ```bash
 git clone https://github.com/danielguerra69/ubuntu-xrdp.git
 cd ubuntu-xrdp/
+vi docker-compose.override.yml # if you want to override any default value
 docker-compose up -d
 ```
