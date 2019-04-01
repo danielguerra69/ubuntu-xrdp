@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 as builder
+FROM nvidia/cuda:10.0-devel-ubuntu18.04 as builder
 MAINTAINER Daniel Guerra
 
 # Install packages
@@ -12,14 +12,13 @@ ENV BUILD_DEPS="git autoconf pkg-config libssl-dev libpam0g-dev \
     bison libxml2-dev dpkg-dev libcap-dev"
 RUN apt-get -yy install  sudo apt-utils software-properties-common $BUILD_DEPS
 
-
 # Build xrdp
 
 WORKDIR /tmp
 RUN apt-get source pulseaudio
 RUN apt-get build-dep -yy pulseaudio
 WORKDIR /tmp/pulseaudio-11.1
-RUN dpkg-buildpackage -rfakeroot -uc -b
+RUN dpkg-buildpackage -uc -b
 WORKDIR /tmp
 RUN git clone --branch v0.9.7 --recursive https://github.com/neutrinolabs/xrdp.git
 WORKDIR /tmp/xrdp
@@ -33,7 +32,7 @@ RUN make
 RUN mkdir -p /tmp/so
 RUN cp *.so /tmp/so
 
-FROM ubuntu:18.04
+FROM nvidia/cuda:10.0-devel-ubuntu18.04
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && apt -y full-upgrade && apt install -y \
   ca-certificates \
@@ -81,6 +80,13 @@ RUN mkdir /var/run/dbus && \
   cp -r /etc/ssh /ssh_orig && \
   rm -rf /etc/ssh/* && \
   rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem
+
+RUN apt-get update && apt-get install wget -y
+RUN wget https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/libcudnn7_7.4.2.24-1+cuda10.0_amd64.deb
+RUN dpkg -i ./libcudnn7_7.4.2.24-1+cuda10.0_amd64.deb
+RUN wget https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/libcudnn7-dev_7.4.2.24-1+cuda10.0_amd64.deb
+RUN dpkg -i ./libcudnn7-dev_7.4.2.24-1+cuda10.0_amd64.deb
+
 
 # Docker config
 VOLUME ["/etc/ssh","/home"]
