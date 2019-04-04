@@ -81,13 +81,6 @@ RUN mkdir /var/run/dbus && \
   rm -rf /etc/ssh/* && \
   rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem
 
-RUN apt-get update && apt-get install wget -y
-RUN wget https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/libcudnn7_7.4.2.24-1+cuda10.0_amd64.deb
-RUN dpkg -i ./libcudnn7_7.4.2.24-1+cuda10.0_amd64.deb
-RUN wget https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/libcudnn7-dev_7.4.2.24-1+cuda10.0_amd64.deb
-RUN dpkg -i ./libcudnn7-dev_7.4.2.24-1+cuda10.0_amd64.deb
-
-
 # Docker config
 VOLUME ["/etc/ssh","/home"]
 EXPOSE 3389 22 9001
