@@ -9,7 +9,7 @@ RUN apt-get -y update
 RUN apt-get -yy upgrade
 ENV BUILD_DEPS="git autoconf pkg-config libssl-dev libpam0g-dev \
     libx11-dev libxfixes-dev libxrandr-dev nasm xsltproc flex \
-    bison libxml2-dev dpkg-dev libcap-dev"
+    bison libxml2-dev dpkg-dev libcap-dev libfuse-dev libpulse-dev libtool"
 RUN apt-get -yy install  sudo apt-utils software-properties-common $BUILD_DEPS
 
 
@@ -21,17 +21,25 @@ RUN apt-get build-dep -yy pulseaudio
 WORKDIR /tmp/pulseaudio-11.1
 RUN dpkg-buildpackage -rfakeroot -uc -b
 WORKDIR /tmp
-RUN git clone --branch v0.9.7 --recursive https://github.com/neutrinolabs/xrdp.git
+RUN git clone --branch v0.9.10 --recursive https://github.com/neutrinolabs/xrdp.git
 WORKDIR /tmp/xrdp
 RUN ./bootstrap
-RUN ./configure
+RUN ./configure --enable-fuse
 RUN make
 RUN make install
-WORKDIR /tmp/xrdp/sesman/chansrv/pulse
-RUN sed -i "s/\/tmp\/pulseaudio\-10\.0/\/tmp\/pulseaudio\-11\.1/g" Makefile
+
+# Build Pulse Audio module
+
+WORKDIR /tmp
+RUN git clone --branch v0.3 https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
+WORKDIR /tmp/pulseaudio-module-xrdp
+RUN ./bootstrap
+# RUN ls /tmp
+# RUN ls /tmp/pulseaudio-11.1
+RUN ./configure PULSE_DIR=/tmp/pulseaudio-11.1
 RUN make
-RUN mkdir -p /tmp/so
-RUN cp *.so /tmp/so
+RUN make install
+RUN find -name \*.so
 
 FROM ubuntu:18.04
 ARG ADDITIONAL_PACKAGES=""
@@ -69,8 +77,8 @@ RUN apt update && apt -y full-upgrade && apt install -y \
   && \
   rm -rf /var/cache/apt /var/lib/apt/lists && \
   mkdir -p /var/lib/xrdp-pulseaudio-installer
-COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
-COPY --from=builder /tmp/so/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
+COPY --from=builder /usr/lib/pulse-11.1/modules/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
+COPY --from=builder /usr/lib/pulse-11.1/modules/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
 ADD bin /usr/bin
 ADD etc /etc
 ADD autostart /etc/xdg/autostart
