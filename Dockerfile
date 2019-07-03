@@ -9,9 +9,9 @@ RUN apt-get -y update
 RUN apt-get -yy upgrade
 ENV BUILD_DEPS="git autoconf pkg-config libssl-dev libpam0g-dev \
     libx11-dev libxfixes-dev libxrandr-dev nasm xsltproc flex \
-    bison libxml2-dev dpkg-dev libcap-dev libfuse-dev libpulse-dev libtool"
+    bison libxml2-dev dpkg-dev libcap-dev libfuse-dev libpulse-dev libtool \
+    xserver-xorg-dev"
 RUN apt-get -yy install  sudo apt-utils software-properties-common $BUILD_DEPS
-
 
 # Build xrdp
 
@@ -40,6 +40,16 @@ RUN ./configure PULSE_DIR=/tmp/pulseaudio-11.1
 RUN make
 RUN make install
 RUN find -name \*.so
+
+# Build XorgXrdp
+
+WORKDIR /tmp
+RUN git clone --branch v0.2.10 https://github.com/neutrinolabs/xorgxrdp.git
+WORKDIR /tmp/xorgxrdp
+RUN ./bootstrap
+RUN ./configure XRDP_CFLAGS=-I/tmp/xrdp/common
+RUN make
+RUN make install
 
 FROM ubuntu:18.04
 ARG ADDITIONAL_PACKAGES=""
@@ -77,8 +87,14 @@ RUN apt update && apt -y full-upgrade && apt install -y \
   && \
   rm -rf /var/cache/apt /var/lib/apt/lists && \
   mkdir -p /var/lib/xrdp-pulseaudio-installer
-COPY --from=builder /usr/lib/pulse-11.1/modules/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
-COPY --from=builder /usr/lib/pulse-11.1/modules/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
+COPY --from=builder /usr/lib/pulse-11.1/modules/module-xrdp-sink.so \
+                    /usr/lib/pulse-11.1/modules/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer/
+COPY --from=builder /usr/lib/xorg/modules/libxorgxrdp.so /usr/lib/xorg/modules/
+COPY --from=builder /usr/lib/xorg/modules/drivers/xrdpdev_drv.so /usr/lib/xorg/modules/drivers/ \
+                    /usr/lib/xorg/modules/input/xrdpkeyb_drv.so \
+                    /usr/lib/xorg/modules/input/xrdpkeyb_drv.so \
+                    /usr/lib/xorg/modules/input/xrdpmouse_drv.so /usr/lib/xorg/modules/input/
+
 ADD bin /usr/bin
 ADD etc /etc
 ADD autostart /etc/xdg/autostart
