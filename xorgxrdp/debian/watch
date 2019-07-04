@@ -1,0 +1,2 @@
+version=4
+https://github.com/neutrinolabs/@PACKAGE@/releases .*/@PACKAGE@@ANY_VERSION@@ARCHIVE_EXT@

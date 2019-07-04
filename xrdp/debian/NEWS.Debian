@@ -1,0 +1,23 @@
+xrdp (0.9.0~20160601+git703fedd-1) unstable; urgency=medium
+
+  The default setup since version 0.9 is xorgxrdp, not X11rdp or VNC.
+  Please ensure that the backend server (xorgxrdp or any VNC X server),
+  if any, is installed, and review configuration files accordingly:
+  - /etc/xrdp/sesman.ini
+  - /etc/xrdp/xrdp.ini
+  - /etc/X11/xrdp/xorg.conf
+
+  Use of VNC is discouraged. If your goal is not exactly to access
+  an already running VNC server, then you should use xorgxrdp instead
+  because VNC brings along quite a lot of issues compared to native
+  RDP that xrdp is not going to workaround properly.
+
+  If you were using an unmodified configuration, you should automatically
+  get the new backend. If not, and you choose not to update configuration
+  files, the old VNC backend will keep working.
+
+  The SESMAN_START configuration variable is not honoured under systemd.
+
+  RESTART_ON_UPGRADE=no is now the default and cannot be changed.
+
+ -- Dominik George <nik@naturalnet.de>  Sun, 24 Jan 2016 18:25:12 +0100
