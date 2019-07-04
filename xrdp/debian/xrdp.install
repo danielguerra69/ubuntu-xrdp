@@ -1,0 +1,2 @@
+debian/socksetup usr/share/xrdp/
+debian/startwm.sh etc/xrdp/

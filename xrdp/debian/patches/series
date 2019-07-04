@@ -1,0 +1,7 @@
+make-fixes.diff
+config.diff
+fix_perms.diff
+shutup-daemon.diff
+systemd.diff
+lfs.diff
+pulse-debian.patch

@@ -1,0 +1,41 @@
+Source: xorgxrdp
+Maintainer: Debian Remote Maintainers <debian-remote@lists.debian.org>
+Uploaders:
+ Dominik George <natureshadow@debian.org>,
+ Andreas Tille <tille@debian.org>,
+ Mike Gabriel <sunweaver@debian.org>,
+ Thorsten Glaser <tg@mirbsd.de>,
+Section: net
+Priority: optional
+Build-Depends:
+ autoconf (>= 2.59),
+ automake (>= 1.6),
+ debhelper (>= 11~),
+ nasm [amd64 hurd-i386 i386 kfreebsd-amd64 kfreebsd-i386],
+ pkg-config,
+ x11-utils,
+ xrdp (>= 0.9.0),
+ xserver-xorg-core,
+ xserver-xorg-dev,
+Standards-Version: 4.3.0
+Vcs-Browser: https://salsa.debian.org/debian-remote-team/xorgxrdp
+Vcs-Git: https://salsa.debian.org/debian-remote-team/xorgxrdp.git
+Homepage: http://xrdp.sourceforge.net
+
+Package: xorgxrdp
+Architecture: any
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+ ${xdriver:Depends},
+Recommends:
+ xorg,
+Provides:
+ xorg-driver-input,
+ xorg-driver-video,
+Description: Remote Desktop Protocol (RDP) modules for X.org
+ xorgxrdp is a set of drivers (screen device, keyboard, and mouse)
+ for X.org enabling use through an RDP session with xrdp. For full
+ operation, most standard X11 fonts and tools need to be installed;
+ the Recommended xorg metapackage is a superset of what’s actually
+ needed but will do.

@@ -1,4 +1,15 @@
-FROM ubuntu:18.04 as builder
+FROM ubuntu:18.04 as base
+MAINTAINER Daniel Guerra
+
+# Versions
+ARG XRDP_VER="0.9.10"
+ENV XRDP_VER=${XRDP_VER}
+ARG XORGXRDP_VER="0.2.10"
+ENV XORGXRDP_VER=${XORGXRDP_VER}
+ARG XRDPPULSE_VER="0.3"
+ENV XRDPPULSE_VER=${XRDPPULSE_VER}
+
+FROM base as builder
 MAINTAINER Daniel Guerra
 
 # Install packages
@@ -9,39 +20,50 @@ RUN apt-get -y update
 RUN apt-get -yy upgrade
 ENV BUILD_DEPS="git autoconf pkg-config libssl-dev libpam0g-dev \
     libx11-dev libxfixes-dev libxrandr-dev nasm xsltproc flex \
-    bison libxml2-dev dpkg-dev libcap-dev libfuse-dev libpulse-dev libtool"
+    bison libxml2-dev dpkg-dev libcap-dev libfuse-dev libpulse-dev libtool \
+    xserver-xorg-dev wget ssl-cert"
 RUN apt-get -yy install  sudo apt-utils software-properties-common $BUILD_DEPS
-
 
 # Build xrdp
 
+WORKDIR /tmp
+RUN apt build-dep -y xrdp
+RUN wget https://github.com/neutrinolabs/xrdp/releases/download/v${XRDP_VER}/xrdp-${XRDP_VER}.tar.gz
+RUN tar -zxf xrdp-${XRDP_VER}.tar.gz
+ADD xrdp /tmp/xrdp-${XRDP_VER}/
+WORKDIR /tmp/xrdp-${XRDP_VER}
+RUN dpkg-buildpackage -rfakeroot -uc -b
+RUN ls /tmp
+RUN dpkg -i /tmp/xrdp_${XRDP_VER}-1_amd64.deb
+
+WORKDIR /tmp
+RUN apt build-dep -y xorgxrdp
+RUN wget https://github.com/neutrinolabs/xorgxrdp/releases/download/v${XORGXRDP_VER}/xorgxrdp-${XORGXRDP_VER}.tar.gz
+RUN tar -zxf xorgxrdp-$XORGXRDP_VER.tar.gz
+ADD xorgxrdp /tmp/xorgxrdp-${XORGXRDP_VER}/
+WORKDIR /tmp/xorgxrdp-${XORGXRDP_VER}
+RUN dpkg-buildpackage -rfakeroot -uc -b
+RUN dpkg -i /tmp/xorgxrdp_${XORGXRDP_VER}-1_amd64.deb
+
+# Prepare Pulse Audio
 WORKDIR /tmp
 RUN apt-get source pulseaudio
 RUN apt-get build-dep -yy pulseaudio
 WORKDIR /tmp/pulseaudio-11.1
 RUN dpkg-buildpackage -rfakeroot -uc -b
-WORKDIR /tmp
-RUN git clone --branch v0.9.10 --recursive https://github.com/neutrinolabs/xrdp.git
-WORKDIR /tmp/xrdp
-RUN ./bootstrap
-RUN ./configure --enable-fuse
-RUN make
-RUN make install
 
 # Build Pulse Audio module
 
 WORKDIR /tmp
-RUN git clone --branch v0.3 https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
-WORKDIR /tmp/pulseaudio-module-xrdp
+RUN wget https://github.com/neutrinolabs/pulseaudio-module-xrdp/archive/v${XRDPPULSE_VER}.tar.gz -O pulseaudio-module-xrdp-${XRDPPULSE_VER}.tar.gz
+RUN tar -zxf pulseaudio-module-xrdp-${XRDPPULSE_VER}.tar.gz
+WORKDIR /tmp/pulseaudio-module-xrdp-${XRDPPULSE_VER}
 RUN ./bootstrap
-# RUN ls /tmp
-# RUN ls /tmp/pulseaudio-11.1
 RUN ./configure PULSE_DIR=/tmp/pulseaudio-11.1
 RUN make
 RUN make install
-RUN find -name \*.so
 
-FROM ubuntu:18.04
+FROM base
 ARG ADDITIONAL_PACKAGES=""
 ENV ADDITIONAL_PACKAGES=${ADDITIONAL_PACKAGES}
 
@@ -55,6 +77,7 @@ RUN apt update && apt -y full-upgrade && apt install -y \
   openssh-server \
   pepperflashplugin-nonfree \
   pulseaudio \
+  ssl-cert \
   sudo \
   supervisor \
   uuid-runtime \
@@ -70,19 +93,21 @@ RUN apt update && apt -y full-upgrade && apt install -y \
   xfce4-taskmanager \
   xfce4-terminal \
   xfce4-xkb-plugin \
-  xorgxrdp \
   xprintidle \
-  xrdp \
   $ADDITIONAL_PACKAGES \
   && \
   rm -rf /var/cache/apt /var/lib/apt/lists && \
   mkdir -p /var/lib/xrdp-pulseaudio-installer
-COPY --from=builder /usr/lib/pulse-11.1/modules/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
-COPY --from=builder /usr/lib/pulse-11.1/modules/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
+COPY --from=builder /usr/lib/pulse-11.1/modules/module-xrdp-sink.so \
+                    /usr/lib/pulse-11.1/modules/module-xrdp-source.so \
+                    /var/lib/xrdp-pulseaudio-installer/
+COPY --from=builder /tmp/xrdp_${XRDP_VER}-1_amd64.deb /tmp/xorgxrdp_${XORGXRDP_VER}-1_amd64.deb /tmp/
+RUN dpkg -i /tmp/xrdp_${XRDP_VER}-1_amd64.deb /tmp/xorgxrdp_${XORGXRDP_VER}-1_amd64.deb && \
+    rm -rf /tmp/xrdp_${XRDP_VER}-1_amd64.deb /tmp/xorgxrdp_${XORGXRDP_VER}-1_amd64.deb
+
 ADD bin /usr/bin
 ADD etc /etc
 ADD autostart /etc/xdg/autostart
-#ADD pulse /usr/lib/pulse-10.0/modules/
 
 # Configure
 RUN mkdir /var/run/dbus && \

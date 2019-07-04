@@ -1,0 +1,6 @@
+Name: xrdp
+Repository: https://github.com/neutrinolabs/xrdp
+Repository-Browse: https://github.com/neutrinolabs/xrdp
+Bug-Database: https://github.com/neutrinolabs/xrdp/issues
+Bug-Submit: https://github.com/neutrinolabs/xrdp/issues/new
+CPE: cpe:/a:xrdp:xrdp
