@@ -16,13 +16,11 @@ MAINTAINER Daniel Guerra
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN sed -i "s/# deb-src/deb-src/g" /etc/apt/sources.list
-RUN apt-get -y update
-RUN apt-get -yy upgrade
 ENV BUILD_DEPS="git autoconf pkg-config libssl-dev libpam0g-dev \
     libx11-dev libxfixes-dev libxrandr-dev nasm xsltproc flex \
     bison libxml2-dev dpkg-dev libcap-dev libfuse-dev libpulse-dev libtool \
     xserver-xorg-dev wget ssl-cert"
-RUN apt-get -yy install  sudo apt-utils software-properties-common $BUILD_DEPS
+RUN apt update && apt -y full-upgrade && apt install -y sudo apt-utils software-properties-common $BUILD_DEPS
 
 # Build xrdp
 
