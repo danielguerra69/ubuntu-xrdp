@@ -2,11 +2,11 @@ FROM ubuntu:18.04 as base
 LABEL maintainer="Daniel Guerra"
 
 # Versions
-ARG XRDP_VER="0.9.11"
+ARG XRDP_VER="0.9.10"
 ENV XRDP_VER=${XRDP_VER}
-ARG XORGXRDP_VER="0.2.11"
+ARG XORGXRDP_VER="0.2.10"
 ENV XORGXRDP_VER=${XORGXRDP_VER}
-ARG XRDPPULSE_VER="0.4"
+ARG XRDPPULSE_VER="0.3"
 ENV XRDPPULSE_VER=${XRDPPULSE_VER}
 
 FROM base as builder
@@ -24,7 +24,6 @@ RUN apt update && apt -y full-upgrade && apt install -y sudo apt-utils software-
 # Build xrdp
 
 WORKDIR /tmp
-RUN groupadd -g 10000 xrdp
 RUN apt build-dep -y xrdp
 RUN wget https://github.com/neutrinolabs/xrdp/releases/download/v"${XRDP_VER}"/xrdp-"${XRDP_VER}".tar.gz
 RUN tar -zxf xrdp-"${XRDP_VER}".tar.gz
