@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 as base
+FROM arm64v8/ubuntu:18.04 as base
 LABEL maintainer="Daniel Guerra"
 
 # Versions
@@ -31,7 +31,7 @@ COPY xrdp /tmp/xrdp-"${XRDP_VER}"/
 WORKDIR /tmp/xrdp-"${XRDP_VER}"
 RUN dpkg-buildpackage -rfakeroot -uc -b
 RUN ls /tmp
-RUN dpkg -i /tmp/xrdp_"${XRDP_VER}"-1_amd64.deb
+RUN dpkg -i /tmp/xrdp_"${XRDP_VER}"-1_arm64v8.deb
 
 WORKDIR /tmp
 RUN apt build-dep -y xorgxrdp
@@ -40,7 +40,7 @@ RUN tar -zxf xorgxrdp-"$XORGXRDP_VER".tar.gz
 COPY xorgxrdp /tmp/xorgxrdp-"${XORGXRDP_VER}"/
 WORKDIR /tmp/xorgxrdp-"${XORGXRDP_VER}"
 RUN dpkg-buildpackage -rfakeroot -uc -b
-RUN dpkg -i /tmp/xorgxrdp_"${XORGXRDP_VER}"-1_amd64.deb
+RUN dpkg -i /tmp/xorgxrdp_"${XORGXRDP_VER}"-1_arm64v8.deb
 
 # Prepare Pulse Audio
 WORKDIR /tmp
@@ -98,9 +98,9 @@ RUN apt update && apt -y full-upgrade && apt install -y \
 COPY --from=builder /usr/lib/pulse-11.1/modules/module-xrdp-sink.so \
                     /usr/lib/pulse-11.1/modules/module-xrdp-source.so \
                     /var/lib/xrdp-pulseaudio-installer/
-COPY --from=builder /tmp/xrdp_${XRDP_VER}-1_amd64.deb /tmp/xorgxrdp_${XORGXRDP_VER}-1_amd64.deb /tmp/
-RUN dpkg -i /tmp/xrdp_"${XRDP_VER}"-1_amd64.deb /tmp/xorgxrdp_"${XORGXRDP_VER}"-1_amd64.deb && \
-    rm -rf /tmp/xrdp_"${XRDP_VER}"-1_amd64.deb /tmp/xorgxrdp_"${XORGXRDP_VER}"-1_amd64.deb
+COPY --from=builder /tmp/xrdp_${XRDP_VER}-1_arm64v8.deb /tmp/xorgxrdp_${XORGXRDP_VER}-1_arm64v8.deb /tmp/
+RUN dpkg -i /tmp/xrdp_"${XRDP_VER}"-1_arm64v8.deb /tmp/xorgxrdp_"${XORGXRDP_VER}"-1_arm64v8.deb && \
+    rm -rf /tmp/xrdp_"${XRDP_VER}"-1_arm64v8.deb /tmp/xorgxrdp_"${XORGXRDP_VER}"-1_arm64v8.deb
 
 COPY bin /usr/bin
 COPY etc /etc
