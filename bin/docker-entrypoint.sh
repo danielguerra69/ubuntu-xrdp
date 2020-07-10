@@ -53,6 +53,21 @@ if [ ! -f "/etc/xrdp/rsakeys.ini" ];
 		xrdp-keygen xrdp auto
 fi
 
+# generate certificate for tls connection
+if [ ! -f "/etc/xrdp/cert.pem" ];
+	then
+		# delete eventual leftover private key
+		rm -f /etc/xrdp/key.pem || true
+		cd /etc/xrdp
+		# TODO make data in certificate configurable?
+		openssl req -x509 -newkey rsa:2048 -nodes -keyout key.pem -out cert.pem -days 365 \
+		-subj "/C=US/ST=Some State/L=Some City/O=Some Org/OU=Some Unit/CN=Terminalserver"
+		crudini --set /etc/xrdp/xrdp.ini Globals security_layer tls
+		crudini --set /etc/xrdp/xrdp.ini Globals certificate /etc/xrdp/cert.pem
+		crudini --set /etc/xrdp/xrdp.ini Globals key_file /etc/xrdp/key.pem
+
+fi
+
 # generate machine-id
 uuidgen > /etc/machine-id
 

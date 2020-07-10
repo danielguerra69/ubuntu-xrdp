@@ -1,0 +1,7 @@
+# debhelper-generated
+xrdp: postinst-has-useless-call-to-ldconfig
+xrdp: package-has-unnecessary-activation-of-ldconfig-trigger
+xrdp: maintainer-script-should-not-use-dpkg-maintscript-helper
+
+# this is a dlopen()'ed plugin
+xrdp: library-not-linked-against-libc usr/lib/x86_64-linux-gnu/xrdp/libmc.so
