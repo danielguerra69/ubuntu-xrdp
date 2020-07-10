@@ -61,13 +61,20 @@ RUN make
 RUN make install
 
 FROM nvidia/cuda:10.2-devel-ubuntu18.04
+ARG ADDITIONAL_PACKAGES=""
+ENV ADDITIONAL_PACKAGES=${ADDITIONAL_PACKAGES}
+
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && apt -y full-upgrade && apt install -y \
   ca-certificates \
+  crudini \
+  firefox \
   less \
   locales \
   openssh-server \
+  pepperflashplugin-nonfree \
   pulseaudio \
+  ssl-cert \
   sudo \
   supervisor \
   uuid-runtime \
@@ -75,43 +82,40 @@ RUN apt update && apt -y full-upgrade && apt install -y \
   wget \
   xauth \
   xautolock \
-  xorgxrdp \
+  xfce4 \
+  xfce4-clipman-plugin \
+  xfce4-cpugraph-plugin \
+  xfce4-netload-plugin \
+  xfce4-screenshooter \
+  xfce4-taskmanager \
+  xfce4-terminal \
+  xfce4-xkb-plugin \
   xprintidle \
-  xrdp \
+  $ADDITIONAL_PACKAGES \
   && \
   rm -rf /var/cache/apt /var/lib/apt/lists && \
   mkdir -p /var/lib/xrdp-pulseaudio-installer
-COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
-COPY --from=builder /tmp/so/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
-ADD bin /usr/bin
-ADD etc /etc
-ADD autostart /etc/xdg/autostart
-#ADD pulse /usr/lib/pulse-10.0/modules/
+COPY --from=builder /usr/lib/pulse-11.1/modules/module-xrdp-sink.so \
+                    /usr/lib/pulse-11.1/modules/module-xrdp-source.so \
+                    /var/lib/xrdp-pulseaudio-installer/
+COPY --from=builder /tmp/xrdp_${XRDP_VER}-1_amd64.deb /tmp/xorgxrdp_${XORGXRDP_VER}-1_amd64.deb /tmp/
+RUN dpkg -i /tmp/xrdp_"${XRDP_VER}"-1_amd64.deb /tmp/xorgxrdp_"${XORGXRDP_VER}"-1_amd64.deb && \
+    rm -rf /tmp/xrdp_"${XRDP_VER}"-1_amd64.deb /tmp/xorgxrdp_"${XORGXRDP_VER}"-1_amd64.deb
+
+COPY bin /usr/bin
+COPY etc /etc
+COPY autostart /etc/xdg/autostart
 
 # Configure
-
-RUN cp /etc/X11/xrdp/xorg.conf /etc/X11
-RUN sed -i "s/console/anybody/g" /etc/X11/Xwrapper.config
-RUN sed -i "s/xrdp\/xorg/xorg/g" /etc/xrdp/sesman.ini
-RUN locale-gen en_US.UTF-8
-RUN echo "xfce4-session" > /etc/skel/.Xclients
-RUN rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem
-
-# Add sample user
-
-RUN addgroup ubuntu
-RUN useradd -m -s /bin/bash -g ubuntu ubuntu
-RUN echo "ubuntu:ubuntu" | /usr/sbin/chpasswd
-RUN echo "ubuntu    ALL=(ALL) ALL" >> /etc/sudoers
-RUN cp -r /etc/ssh /ssh_orig && \
+RUN mkdir /var/run/dbus && \
+  cp /etc/X11/xrdp/xorg.conf /etc/X11 && \
+  sed -i "s/console/anybody/g" /etc/X11/Xwrapper.config && \
+  sed -i "s/xrdp\/xorg/xorg/g" /etc/xrdp/sesman.ini && \
+  locale-gen en_US.UTF-8 && \
+  echo "xfce4-session" > /etc/skel/.Xclients && \
+  cp -r /etc/ssh /ssh_orig && \
   rm -rf /etc/ssh/* && \
   rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem
-
-RUN apt-get update && apt-get install wget -y
-	RUN wget https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/libcudnn7_7.4.2.24-1+cuda10.0_amd64.deb
-	RUN dpkg -i ./libcudnn7_7.4.2.24-1+cuda10.0_amd64.deb
-	RUN wget https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/libcudnn7-dev_7.4.2.24-1+cuda10.0_amd64.deb
-	RUN dpkg -i ./libcudnn7-dev_7.4.2.24-1+cuda10.0_amd64.deb
 
 # Docker config
 VOLUME ["/etc/ssh","/home"]
