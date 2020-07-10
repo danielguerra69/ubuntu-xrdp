@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.2-devel-ubuntu18.04 as builder
+FROM nvidia/cuda:10.2-devel-ubuntu18.04 as base
 LABEL maintainer="Daniel Guerra"
 
 # Versions
@@ -60,7 +60,7 @@ RUN ./configure PULSE_DIR=/tmp/pulseaudio-11.1
 RUN make
 RUN make install
 
-FROM nvidia/cuda:10.2-devel-ubuntu18.04
+FROM base
 ARG ADDITIONAL_PACKAGES=""
 ENV ADDITIONAL_PACKAGES=${ADDITIONAL_PACKAGES}
 
