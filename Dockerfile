@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.0-devel-ubuntu18.04 as builder
+FROM ubuntu18.04 as builder
 MAINTAINER Daniel Guerra
 
 # Install packages
