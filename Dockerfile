@@ -1,4 +1,4 @@
-FROM ubuntu18.04 as builder
+FROM ubuntu:18.04 as builder
 MAINTAINER Daniel Guerra
 
 # Install packages
@@ -35,7 +35,7 @@ RUN make
 RUN mkdir -p /tmp/so
 RUN cp *.so /tmp/so
 
-FROM nvidia/cuda:10.0-devel-ubuntu18.04
+FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && apt -y full-upgrade && apt install -y \
   ca-certificates \
