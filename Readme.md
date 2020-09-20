@@ -31,7 +31,9 @@ Use the Xorg session (leave as it is), user and pass.
 To automate the creation of users, supply a file users.list in the /etc directory of the container.
 The format is as follows:
 
+```bash
 id username password-hash list-of-supplemental-groups
+```
 
 The provided users.list file will create a sample user with sudo rights
 
