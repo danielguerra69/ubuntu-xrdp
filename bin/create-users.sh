@@ -3,7 +3,8 @@
 test -f /etc/users.list || exit 0
 
 while read id username hash groups; do
-        grep $username /etc/passwd && continue
+        # Skip, if user already exists
+        grep ^$username /etc/passwd && continue
         # Create group
         addgroup --gid $id $username
         # Create user
