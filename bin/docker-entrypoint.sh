@@ -1,18 +1,7 @@
 #!/bin/bash
 
-# Add sample user
-# sample user uses uid 999 to reduce conflicts with user ids when mounting an existing home dir
-# the below has represents the password 'ubuntu'
-# run `openssl passwd -1 'newpassword'` to create a custom hash
-if [ ! $PASSWORDHASH ]; then
-    export PASSWORDHASH='$1$1osxf5dX$z2IN8cgmQocDYwTCkyh6r/'
-fi
-
-addgroup --gid 999 ubuntu && \
-useradd -m -u 999 -s /bin/bash -g ubuntu ubuntu
-echo "ubuntu:$PASSWORDHASH" | /usr/sbin/chpasswd -e
-echo "ubuntu    ALL=(ALL) ALL" >> /etc/sudoers
-unset PASSWORDHASH
+# Add users
+bash /usr/bin/create-users.sh
 
 # Add the ssh config if needed
 
