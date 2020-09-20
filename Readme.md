@@ -26,26 +26,28 @@ docker run -d --name uxrdp --hostname terminalserver --shm-size 1g -p 3389:3389 
 Connect with your remote desktop client to the docker server.
 Use the Xorg session (leave as it is), user and pass.
 
-## Sample user
+## Creation of users
 
-There is a sample user with sudo rights
+To automate the creation of users, supply a file users.list in the /etc directory of the container.
+The format is as follows:
+
+id username password-hash list-of-supplemental-groups
+
+The provided users.list file will create a sample user with sudo rights
 
 Username: ubuntu
 Password: ubuntu
 
-
-You can set a PASSWORDHASH
-
-First create a password hash
+To generate the password hash use the following line
 
 ```bash
 openssl passwd -1 'newpassword'
 ```
 
-Run the xrdp container with your hash
+Run the xrdp container with your file
 
 ```bash
-docker run -d -e PASSWORDHASH='$1$Cm8EQjXg$7dJeRsw6TLvgxsl3.pBRZ1'
+docker run -d -v $PWD/users.list:/etc/users.list
 ```
 
 You can change your password in the rdp session in a terminal
