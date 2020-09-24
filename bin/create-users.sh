@@ -12,5 +12,7 @@ while read id username hash groups; do
         # Set password
         echo "$username:$hash" | /usr/sbin/chpasswd -e
         # Add supplemental groups
-        usermod -aG $groups $username
+        if [ $groups ]; then
+                usermod -aG $groups $username
+        fi
 done < /etc/users.list
