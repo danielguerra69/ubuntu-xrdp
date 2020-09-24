@@ -1,18 +1,7 @@
 #!/bin/bash
 
-# Add sample user
-# sample user uses uid 999 to reduce conflicts with user ids when mounting an existing home dir
-# the below has represents the password 'ubuntu'
-# run `openssl passwd -1 'newpassword'` to create a custom hash
-if [ ! $PASSWORDHASH ]; then
-    export PASSWORDHASH='$1$1osxf5dX$z2IN8cgmQocDYwTCkyh6r/'
-fi
-
-addgroup --gid 999 ubuntu && \
-useradd -m -u 999 -s /bin/bash -g ubuntu ubuntu
-echo "ubuntu:$PASSWORDHASH" | /usr/sbin/chpasswd -e
-echo "ubuntu    ALL=(ALL) ALL" >> /etc/sudoers
-unset PASSWORDHASH
+# Add users
+bash /usr/bin/create-users.sh
 
 # Add the ssh config if needed
 
@@ -59,9 +48,10 @@ if [ ! -f "/etc/xrdp/cert.pem" ];
 		# delete eventual leftover private key
 		rm -f /etc/xrdp/key.pem || true
 		cd /etc/xrdp
-		# TODO make data in certificate configurable?
-		openssl req -x509 -newkey rsa:2048 -nodes -keyout key.pem -out cert.pem -days 365 \
-		-subj "/C=US/ST=Some State/L=Some City/O=Some Org/OU=Some Unit/CN=Terminalserver"
+		if [ ! $CERTIFICATE_SUBJECT ]; then
+			$CERTIFICATE_SUBJECT="/C=US/ST=Some State/L=Some City/O=Some Org/OU=Some Unit/CN=Terminalserver"
+		fi
+		openssl req -x509 -newkey rsa:2048 -nodes -keyout key.pem -out cert.pem -days 365 -subj $CERTIFICATE_SUBJECT
 		crudini --set /etc/xrdp/xrdp.ini Globals security_layer tls
 		crudini --set /etc/xrdp/xrdp.ini Globals certificate /etc/xrdp/cert.pem
 		crudini --set /etc/xrdp/xrdp.ini Globals key_file /etc/xrdp/key.pem
