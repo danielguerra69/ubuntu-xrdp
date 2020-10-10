@@ -22,13 +22,13 @@ fi
 
 # generate fresh rsa key if needed
 if [ ! -f "/etc/ssh/ssh_host_rsa_key" ];
-	then 
+	then
 		ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa
 fi
 
 # generate fresh dsa key if needed
 if [ ! -f "/etc/ssh/ssh_host_dsa_key" ];
-	then 
+	then
 		ssh-keygen -f /etc/ssh/ssh_host_dsa_key -N '' -t dsa
 fi
 
@@ -49,9 +49,9 @@ if [ ! -f "/etc/xrdp/cert.pem" ];
 		rm -f /etc/xrdp/key.pem || true
 		cd /etc/xrdp
 		if [ ! $CERTIFICATE_SUBJECT ]; then
-			$CERTIFICATE_SUBJECT="/C=US/ST=Some State/L=Some City/O=Some Org/OU=Some Unit/CN=Terminalserver"
+			CERTIFICATE_SUBJECT="/C=US/ST=Some State/L=Some City/O=Some Org/OU=Some Unit/CN=Terminalserver"
 		fi
-		openssl req -x509 -newkey rsa:2048 -nodes -keyout key.pem -out cert.pem -days 365 -subj $CERTIFICATE_SUBJECT
+		openssl req -x509 -newkey rsa:2048 -nodes -keyout /etc/xrdp/key.pem -out /etc/xrdp/cert.pem -days 365 -subj "$CERTIFICATE_SUBJECT"
 		crudini --set /etc/xrdp/xrdp.ini Globals security_layer tls
 		crudini --set /etc/xrdp/xrdp.ini Globals certificate /etc/xrdp/cert.pem
 		crudini --set /etc/xrdp/xrdp.ini Globals key_file /etc/xrdp/key.pem
