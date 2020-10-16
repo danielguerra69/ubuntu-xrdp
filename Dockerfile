@@ -1,4 +1,4 @@
-FROM ubuntu:18.04 as builder
+FROM ubuntu:20.04 as builder
 MAINTAINER Daniel Guerra
 
 # Install packages
@@ -18,22 +18,25 @@ RUN apt-get -yy install  sudo apt-utils software-properties-common $BUILD_DEPS
 WORKDIR /tmp
 RUN apt-get source pulseaudio
 RUN apt-get build-dep -yy pulseaudio
-WORKDIR /tmp/pulseaudio-11.1
+WORKDIR /tmp/pulseaudio-13.99.1
 RUN dpkg-buildpackage -rfakeroot -uc -b
 WORKDIR /tmp
-RUN git clone --branch v0.9.7 --recursive https://github.com/neutrinolabs/xrdp.git
+RUN git clone --branch devel --recursive https://github.com/neutrinolabs/xrdp.git
 WORKDIR /tmp/xrdp
 RUN ./bootstrap
 RUN ./configure
 RUN make
 RUN make install
-WORKDIR /tmp/xrdp/sesman/chansrv/pulse
-RUN sed -i "s/\/tmp\/pulseaudio\-10\.0/\/tmp\/pulseaudio\-11\.1/g" Makefile
+WORKDIR /tmp
+RUN  apt -yy install libpulse-dev
+RUN git clone --recursive https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
+WORKDIR /tmp/pulseaudio-module-xrdp
+RUN ./bootstrap && ./configure PULSE_DIR=/tmp/pulseaudio-13.99.1
 RUN make
 RUN mkdir -p /tmp/so
-RUN cp *.so /tmp/so
+RUN cp src/.libs/*.so /tmp/so
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && apt -y full-upgrade && apt install -y \
   ca-certificates \
