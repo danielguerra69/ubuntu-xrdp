@@ -37,6 +37,7 @@ FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && apt -y full-upgrade && apt install -y \
   ca-certificates \
+  crudini \
   firefox \
   less \
   locales \

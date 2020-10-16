@@ -1,0 +1,3 @@
+report-with: xorgxrdp
+
+package-status: vnc-server xserver-xorg-legacy

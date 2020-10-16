@@ -26,26 +26,30 @@ docker run -d --name uxrdp --hostname terminalserver --shm-size 1g -p 3389:3389 
 Connect with your remote desktop client to the docker server.
 Use the Xorg session (leave as it is), user and pass.
 
-## Sample user
+## Creation of users
 
-There is a sample user with sudo rights
+To automate the creation of users, supply a file users.list in the /etc directory of the container.
+The format is as follows:
+
+```bash
+id username password-hash list-of-supplemental-groups
+```
+
+The provided users.list file will create a sample user with sudo rights
 
 Username: ubuntu
 Password: ubuntu
 
-
-You can set a PASSWORDHASH
-
-First create a password hash
+To generate the password hash use the following line
 
 ```bash
 openssl passwd -1 'newpassword'
 ```
 
-Run the xrdp container with your hash
+Run the xrdp container with your file
 
 ```bash
-docker run -d -e PASSWORDHASH='$1$Cm8EQjXg$7dJeRsw6TLvgxsl3.pBRZ1'
+docker run -d -v $PWD/users.list:/etc/users.list
 ```
 
 You can change your password in the rdp session in a terminal
@@ -87,14 +91,22 @@ This image uses two volumes:
 2. `/home/` holds the `ubuntu/` default user home directory
 
 When bind-mounting `/home/`, make sure it contains a folder `ubuntu/` with proper permission, otherwise no login will be possible.
+
 ```
 mkdir -p ubuntu
 chown 999:999 ubuntu
 ```
 
+## Installing additional packages during build
+
+The Dockerfile has support for the build argument ADDITIONAL_PACKAGES to install additional packages during build. Either pass it with `--build-arg` during `docker build` or add it 
+as `args` in your `docker-compose.override.yml` and run `docker-compose build`.
+
 ## To run with docker-compose
+
 ```bash
 git clone https://github.com/danielguerra69/ubuntu-xrdp.git
 cd ubuntu-xrdp/
+vi docker-compose.override.yml # if you want to override any default value
 docker-compose up -d
 ```
