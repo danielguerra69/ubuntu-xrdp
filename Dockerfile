@@ -35,14 +35,17 @@ RUN cp *.so /tmp/so
 
 FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt update && apt -y full-upgrade && apt install -y \
+RUN apt update && apt install -y software-properties-common
+RUN add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner" && apt update
+RUN apt -y full-upgrade && apt install -y \
+  adobe-flashplugin \
+  browser-plugin-freshplayer-pepperflash \
   ca-certificates \
   crudini \
   firefox \
   less \
   locales \
   openssh-server \
-  pepperflashplugin-nonfree \
   pulseaudio \
   sudo \
   supervisor \
