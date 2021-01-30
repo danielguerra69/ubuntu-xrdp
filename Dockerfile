@@ -42,7 +42,7 @@ ENV ADDITIONAL_PACKAGES=${ADDITIONAL_PACKAGES}
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && apt install -y software-properties-common apt-utils
 RUN add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner" && apt update
-RUN apt -y full-upgrade && apt install -y \
+RUN apt -y full-upgrade && apt-get install -y \
   adobe-flashplugin \
   browser-plugin-freshplayer-pepperflash \
   ca-certificates \
@@ -71,6 +71,7 @@ RUN apt -y full-upgrade && apt install -y \
   xprintidle \
   xrdp \
   && \
+  apt remove -y light-locker && \
   rm -rf /var/cache/apt /var/lib/apt/lists && \
   mkdir -p /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
@@ -78,7 +79,6 @@ COPY --from=builder /tmp/so/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-install
 ADD bin /usr/bin
 ADD etc /etc
 ADD autostart /etc/xdg/autostart
-#ADD pulse /usr/lib/pulse-10.0/modules/
 
 # Configure
 RUN mkdir /var/run/dbus && \
