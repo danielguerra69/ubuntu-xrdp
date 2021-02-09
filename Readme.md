@@ -1,8 +1,8 @@
-## Ubuntu 18.04/16.04  Multi User Remote Desktop Server
+## Ubuntu 20.04/18.04/16.04  Multi User Remote Desktop Server
 
 Fully implemented Multi User xrdp
 with xorgxrdp and pulseaudio
-on Ubuntu 16.04/18.04.
+on Ubuntu 20.04/18.04/16.04.
 Copy/Paste and sound is working.
 Users can re-login in the same session.
 Xfce4, Firefox are pre installed.
@@ -11,6 +11,7 @@ Xfce4, Firefox are pre installed.
 
 danielguerra/ubuntu-xrdp:16.04
 danielguerra/ubuntu-xrdp:18.04  or latest
+danielguerra/ubuntu-xrdp:20.04
 
 ## Usage
 
@@ -18,7 +19,7 @@ Start the rdp server
 (WARNING: use the --shm-size 1g or firefox/chrome will crash)
 
 ```bash
-docker run -d --name uxrdp --hostname terminalserver --shm-size 1g -p 3389:3389 -p 2222:22 danielguerra/ubuntu-xrdp
+docker run -d --name uxrdp --hostname terminalserver --shm-size 1g -p 3389:3389 -p 2222:22 danielguerra/ubuntu-xrdp:20.04
 ```
 *note if you already use a rdp server on 3389 change -p <my-port>:3389
 	  -p 2222:22 is for ssh access ( ssh -p 2222 ubuntu@<docker-ip> )
