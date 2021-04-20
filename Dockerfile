@@ -86,7 +86,7 @@ RUN mkdir /var/run/dbus && \
   sed -i "s/console/anybody/g" /etc/X11/Xwrapper.config && \
   sed -i "s/xrdp\/xorg/xorg/g" /etc/xrdp/sesman.ini && \
   locale-gen en_US.UTF-8 && \
-  echo "pulseaudio -D" > /etc/skel/.Xsession && \
+  echo "pulseaudio -D --enable-memfd=True" > /etc/skel/.Xsession && \
   echo "xfce4-session" >> /etc/skel/.Xsession && \
   cp -r /etc/ssh /ssh_orig && \
   rm -rf /etc/ssh/* && \
