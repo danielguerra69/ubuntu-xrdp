@@ -70,9 +70,9 @@ RUN apt -y full-upgrade && apt-get install -y \
   xfce4-xkb-plugin \
   xorgxrdp \
   xprintidle \
-  xrdp \
-  && \
-  apt remove -y light-locker && \
+  xrdp && \
+  apt remove -y light-locker xscreensaver && \
+  apt autoremove -y && \
   rm -rf /var/cache/apt /var/lib/apt/lists && \
   mkdir -p /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
