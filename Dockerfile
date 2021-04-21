@@ -56,6 +56,7 @@ RUN apt -y full-upgrade && apt-get install -y \
   supervisor \
   uuid-runtime \
   vim \
+  vlc \
   wget \
   xauth \
   xautolock \
