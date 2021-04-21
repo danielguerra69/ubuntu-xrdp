@@ -53,6 +53,7 @@ RUN apt -y full-upgrade && apt install -y \
   supervisor \
   uuid-runtime \
   vim \
+  vlc \
   wget \
   xauth \
   xautolock \
@@ -67,8 +68,9 @@ RUN apt -y full-upgrade && apt install -y \
   xorgxrdp \
   xprintidle \
   xrdp \
-  $ADDITIONAL_PACKAGES \
-  && \
+  $ADDITIONAL_PACKAGES && \
+  apt-get remove -yy xscreensaver && \
+  apt-get autoremove -yy && \
   rm -rf /var/cache/apt /var/lib/apt/lists && \
   mkdir -p /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
