@@ -1,18 +1,22 @@
-### Load audio drivers statically
-### (it's probably better to not load these drivers manually, but instead
-### use module-udev-detect -- see below -- for doing this automatically)
-# load-module module-alsa-sink
-# load-module module-alsa-source device=hw:1,0
-#  load-module module-oss device="/dev/dsp" sink_name=output source_name=input
-# load-module module-oss-mmap device="/dev/dsp" sink_name=output source_name=input
-# load-module module-null-sink
-# load-module module-pipe-sink
-
-
-.nofail
 .fail
-load-module module-augment-properties
+
+### Automatically restore the volume of streams and devices
+load-module module-device-restore
+load-module module-stream-restore
+load-module module-card-restore
+
 load-module module-always-sink
+
+### If autoexit on idle is enabled we want to make sure we only quit
+### when no local session needs us anymore.
+.ifexists module-console-kit.so
+load-module module-console-kit
+.endif
+.ifexists module-systemd-login.so
+load-module module-systemd-login
+.endif
+
+### RDP audio part
 .ifexists module-xrdp-sink.so
 load-module module-xrdp-sink
 .endif
