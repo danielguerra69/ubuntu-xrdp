@@ -40,23 +40,18 @@ FROM ubuntu:18.04
 ARG ADDITIONAL_PACKAGES=""
 ENV ADDITIONAL_PACKAGES=${ADDITIONAL_PACKAGES}
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt update && apt -y full-upgrade && apt install -y \
+RUN apt update && apt install -y \
   ca-certificates \
   crudini \
   less \
   locales \
-  openssh-server \
   pulseaudio \
   sudo \
   supervisor \
   uuid-runtime \
-  vim \
-  vlc \
   wget \
   xauth \
-  xautolock \
   xorgxrdp \
-  xprintidle \
   xrdp \
   $ADDITIONAL_PACKAGES && \
   apt-get remove -yy xscreensaver && \
@@ -76,12 +71,10 @@ RUN mkdir /var/run/dbus && \
   sed -i "s/xrdp\/xorg/xorg/g" /etc/xrdp/sesman.ini && \
   locale-gen en_US.UTF-8 && \
   # echo "xfce4-session" > /etc/skel/.Xclients && \
-  cp -r /etc/ssh /ssh_orig && \
-  rm -rf /etc/ssh/* && \
   rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem
 
 # Docker config
-VOLUME ["/etc/ssh","/home"]
-EXPOSE 3389 22 9001
+VOLUME ["/home"]
+EXPOSE 3389 9001
 ENTRYPOINT ["/usr/bin/docker-entrypoint.sh"]
 CMD ["supervisord"]
