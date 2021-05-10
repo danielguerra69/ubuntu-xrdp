@@ -21,17 +21,20 @@ RUN apt-get build-dep -yy pulseaudio
 WORKDIR /tmp/pulseaudio-11.1
 RUN dpkg-buildpackage -rfakeroot -uc -b
 WORKDIR /tmp
-RUN git clone --branch v0.9.7 --recursive https://github.com/neutrinolabs/xrdp.git
+RUN git clone --branch devel --recursive https://github.com/neutrinolabs/xrdp.git
 WORKDIR /tmp/xrdp
 RUN ./bootstrap
 RUN ./configure
 RUN make
 RUN make install
-WORKDIR /tmp/xrdp/sesman/chansrv/pulse
-RUN sed -i "s/\/tmp\/pulseaudio\-10\.0/\/tmp\/pulseaudio\-11\.1/g" Makefile
+WORKDIR /tmp
+RUN  apt -yy install libpulse-dev
+RUN git clone --recursive https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
+WORKDIR /tmp/pulseaudio-module-xrdp
+RUN ./bootstrap && ./configure PULSE_DIR=/tmp/pulseaudio-11.1
 RUN make
 RUN mkdir -p /tmp/so
-RUN cp *.so /tmp/so
+RUN cp src/.libs/*.so /tmp/so
 
 FROM ubuntu:18.04
 ARG ADDITIONAL_PACKAGES=""
@@ -48,14 +51,16 @@ RUN apt update && apt -y full-upgrade && apt install -y \
   supervisor \
   uuid-runtime \
   vim \
+  vlc \
   wget \
   xauth \
   xautolock \
   xorgxrdp \
   xprintidle \
   xrdp \
-  $ADDITIONAL_PACKAGES \
-  && \
+  $ADDITIONAL_PACKAGES && \
+  apt-get remove -yy xscreensaver && \
+  apt-get autoremove -yy && \
   rm -rf /var/cache/apt /var/lib/apt/lists && \
   mkdir -p /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer

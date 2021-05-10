@@ -1,0 +1,17 @@
+.nofail
+.fail
+load-module module-augment-properties
+load-module module-always-sink
+.ifexists module-xrdp-sink.so
+load-module module-xrdp-sink
+.endif
+.ifexists module-xrdp-source.so
+load-module module-xrdp-source
+.endif
+.ifexists /var/lib/xrdp-pulseaudio-installer/module-xrdp-sink.so
+load-module /var/lib/xrdp-pulseaudio-installer/module-xrdp-sink.so
+.endif
+.ifexists /var/lib/xrdp-pulseaudio-installer/module-xrdp-source.so
+load-module /var/lib/xrdp-pulseaudio-installer/module-xrdp-source.so
+.endif
+load-module module-native-protocol-unix
