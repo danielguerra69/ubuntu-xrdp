@@ -50,6 +50,7 @@ RUN apt -y full-upgrade && apt install -y \
   firefox \
   less \
   locales \
+  ubuntu-mate-desktop \
   openssh-server \
   pulseaudio \
   sudo \
@@ -60,14 +61,6 @@ RUN apt -y full-upgrade && apt install -y \
   wget \
   xauth \
   xautolock \
-  xfce4 \
-  xfce4-clipman-plugin \
-  xfce4-cpugraph-plugin \
-  xfce4-netload-plugin \
-  xfce4-screenshooter \
-  xfce4-taskmanager \
-  xfce4-terminal \
-  xfce4-xkb-plugin \
   xorgxrdp \
   xprintidle \
   xrdp \
@@ -89,7 +82,7 @@ RUN mkdir /var/run/dbus && \
   sed -i "s/console/anybody/g" /etc/X11/Xwrapper.config && \
   sed -i "s/xrdp\/xorg/xorg/g" /etc/xrdp/sesman.ini && \
   locale-gen en_US.UTF-8 && \
-  echo "xfce4-session" > /etc/skel/.Xclients && \
+  echo "mate-session" > /etc/skel/.Xclients && \
   cp -r /etc/ssh /ssh_orig && \
   rm -rf /etc/ssh/* && \
   rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem

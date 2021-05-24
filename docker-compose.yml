@@ -1,10 +1,10 @@
 version: '3.5'
 services:
-  terminalserver:
+  uxrdp:
     build: ./
-    image: danielguerra/ubuntu-xrdp
+    image: danielguerra/ubuntu-xrdp:mate
     container_name: uxrdp
-    hostname: terminalserver
+    hostname: uxrdp
     restart: always
     shm_size: 1g
     environment:
