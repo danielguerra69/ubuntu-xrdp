@@ -2,7 +2,7 @@ version: '3.5'
 services:
   terminalserver:
     build: ./
-    image: danielguerra/ubuntu-xrdp:20.04
+    image: danielguerra/ubuntu-xrdp:20.10
     container_name: uxrdp
     hostname: terminalserver
     restart: always
