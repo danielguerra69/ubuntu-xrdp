@@ -15,7 +15,8 @@ services:
       - "2222:22"
     volumes:
       - ssh:/etc/ssh/
-      - /home/:/home/
+      - home:/home
 
 volumes:
   ssh:
+  home:
