@@ -70,7 +70,8 @@ RUN apt -y full-upgrade && apt-get install -y \
   xfce4-xkb-plugin \
   xorgxrdp \
   xprintidle \
-  xrdp && \
+  xrdp \
+  $ADDITIONAL_PACKAGES && \
   apt remove -y light-locker xscreensaver && \
   apt autoremove -y && \
   rm -rf /var/cache/apt /var/lib/apt/lists && \
