@@ -1,42 +1,48 @@
 FROM ubuntu:20.10 as builder
+MAINTAINER Daniel Guerra
 
-# Install dev packages
+# Install packages
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN sed -i "s/# deb-src/deb-src/g" /etc/apt/sources.list
-RUN apt -y update && apt -yy upgrade
+RUN apt-get -y update
+RUN apt-get -yy upgrade
 ENV BUILD_DEPS="git autoconf pkg-config libssl-dev libpam0g-dev \
     libx11-dev libxfixes-dev libxrandr-dev nasm xsltproc flex \
     bison libxml2-dev dpkg-dev libcap-dev"
-RUN apt -yy install sudo apt-utils software-properties-common $BUILD_DEPS
+RUN apt-get -yy install  sudo apt-utils software-properties-common $BUILD_DEPS
 
-# Build xrdp and pulseaudio
+
+# Build xrdp
 
 WORKDIR /tmp
-RUN apt source pulseaudio
-RUN apt build-dep -yy pulseaudio
+RUN apt-get source pulseaudio
+RUN apt-get build-dep -yy pulseaudio
 WORKDIR /tmp/pulseaudio-13.99.2
 RUN dpkg-buildpackage -rfakeroot -uc -b
 WORKDIR /tmp
 RUN git clone --branch devel --recursive https://github.com/neutrinolabs/xrdp.git
 WORKDIR /tmp/xrdp
-RUN ./bootstrap && ./configure
-RUN make && make install
+RUN ./bootstrap
+RUN ./configure
+RUN make
+RUN make install
 WORKDIR /tmp
 RUN  apt -yy install libpulse-dev
 RUN git clone --recursive https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
 WORKDIR /tmp/pulseaudio-module-xrdp
 RUN ./bootstrap && ./configure PULSE_DIR=/tmp/pulseaudio-13.99.2
 RUN make
-RUN mkdir -p /tmp/so && cp src/.libs/*.so /tmp/so
-
-# Build final ubuntu image
+RUN mkdir -p /tmp/so
+RUN cp src/.libs/*.so /tmp/so
 
 FROM ubuntu:20.10
+ARG ADDITIONAL_PACKAGES=""
+ENV ADDITIONAL_PACKAGES=${ADDITIONAL_PACKAGES}
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && apt install -y software-properties-common apt-utils
-RUN add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner" && apt-add-repository ppa:fish-shell/release-3 && apt update
-RUN apt -y full-upgrade && apt install -y \
+RUN add-apt-repository "deb http://archive.canonical.com/ $(lsb_release -sc) partner" && apt update
+RUN apt -y full-upgrade && apt-get install -y \
   adobe-flashplugin \
   ca-certificates \
   crudini \
@@ -49,17 +55,8 @@ RUN apt -y full-upgrade && apt install -y \
   supervisor \
   uuid-runtime \
   vim \
-  curl \
-  fish \
-  aria2 \
   vlc \
   wget \
-  nano \
-  mkvtoolnix \ 
-  mkvtoolnix-gui \
-  mediainfo \
-  mediainfo-gui \
-  filezilla \
   xauth \
   xautolock \
   xfce4 \
@@ -91,10 +88,12 @@ RUN mkdir /var/run/dbus && \
   locale-gen en_US.UTF-8 && \
   echo "pulseaudio -D --enable-memfd=True" > /etc/skel/.Xsession && \
   echo "xfce4-session" >> /etc/skel/.Xsession && \
+  cp -r /etc/ssh /ssh_orig && \
+  rm -rf /etc/ssh/* && \
   rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem
-RUN sed -i "s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g" /etc/ssh/sshd_config && service ssh restart
 
 # Docker config
+VOLUME ["/etc/ssh","/home"]
 EXPOSE 3389 22 9001
 ENTRYPOINT ["/usr/bin/docker-entrypoint.sh"]
 CMD ["supervisord"]

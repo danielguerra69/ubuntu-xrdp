@@ -1,0 +1,21 @@
+version: '3.5'
+services:
+  terminalserver:
+    build: ./
+    image: danielguerra/ubuntu-xrdp:20.10
+    container_name: uxrdp
+    hostname: terminalserver
+    restart: always
+    shm_size: 1g
+    environment:
+       IDLETIME: 11
+    ports:
+      - "3389:3389"
+      - "2222:22"
+    volumes:
+      - ssh:/etc/ssh/
+      - home/:/home/
+
+volumes:
+  ssh:
+  home:
