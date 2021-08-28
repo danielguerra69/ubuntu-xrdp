@@ -2,17 +2,11 @@
 
 test -f /etc/users.list || exit 0
 
-while read id username hash groups; do
+while read id gid username hash; do
         # Skip, if user already exists
         grep ^$username /etc/passwd && continue
-        # Create group
-        addgroup --gid $id $username
         # Create user
-        useradd -m -u $id -s /bin/bash -g $username $username
+        useradd -m -ou $id -s /bin/bash -g $gid $username
         # Set password
         echo "$username:$hash" | /usr/sbin/chpasswd -e
-        # Add supplemental groups
-        if [ $groups ]; then
-                usermod -aG $groups $username
-        fi
 done < /etc/users.list
