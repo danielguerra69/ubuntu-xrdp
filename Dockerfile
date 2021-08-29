@@ -65,10 +65,10 @@ RUN apt install -y \
   apt remove -y light-locker xscreensaver && \
   apt autoremove -y
 
-# Youtube-DL
+# Youtube-DLP
 
-RUN curl -L https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl && \
-  chmod a+rx /usr/local/bin/youtube-dl
+RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp && \
+  chmod a+rx /usr/local/bin/yt-dlp
 
 # RenameMyTVSeries
 
